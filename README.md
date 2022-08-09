@@ -285,8 +285,4 @@ You have to enable your php socket if it is not enable.
 
 
 
-
-
-
-
 # end
