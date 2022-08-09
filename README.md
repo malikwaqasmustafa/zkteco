@@ -33,8 +33,9 @@ You have to enable your php socket if it is not enable.
 
 //  1 s't parameter is string $ip Device IP Address
 //  2 nd  parameter is integer $port Default: 4370
-  
-    $zk = new ZKTeco('192.168.1.201');
+//. 3rd parameter is interger seconds ( this is socker default read timeout, in case you try with a wrong ip which doesn't belongs to a machine then it will respond with error otherwise it will keep loading and crash )  
+
+    $zk = new ZKTeco('192.168.1.201', 4370, 5);
     
 //  or you can use with port
 //    $zk = new ZKTeco('192.168.1.201', 8080);
