@@ -30,19 +30,20 @@ class ZKTeco{
   public $_session_id = 0;
   public $_section = '';
 
-  /**
-   * ZKLib constructor.
-   * @param string $ip Device IP
-   * @param integer $port Default: 4370
-   */
-  public function __construct($ip, $port = 4370)
+    /**
+     * ZKLib constructor.
+     * @param  string  $ip  Device IP
+     * @param  integer  $port  Default: 4370
+     * @param  int  $timout
+     */
+  public function __construct($ip, $port = 4370, $timout = 5)
   {
     $this->_ip = $ip;
     $this->_port = $port;
 
     $this->_zkclient = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 
-    $timeout = array('sec' => 60, 'usec' => 500000);
+    $timeout = array('sec' => $timout, 'usec' => 0);
     socket_set_option($this->_zkclient, SOL_SOCKET, SO_RCVTIMEO, $timeout);
 
   }
@@ -430,6 +431,6 @@ class ZKTeco{
 
   public function writeLCD()
   {
-    return Device::writeLCD($this, 2, "RAIHAN Afroz Topu");
+    return Device::writeLCD($this, 2, "Welcome From SDK");
   }
 }
