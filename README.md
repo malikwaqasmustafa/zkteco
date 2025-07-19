@@ -5,285 +5,415 @@
 [![Stars](https://img.shields.io/github/stars/sketchtechnologies1/zkteco?style=flat-square)](https://github.com/sketchtechnologies1/zkteco/stargazers)
 [![Total Downloads](https://img.shields.io/packagist/dt/maliklibs/zkteco?style=flat-square)](https://packagist.org/packages/maliklibs/zkteco)
 [![License](https://poser.pugx.org/maliklibs/zkteco/license.svg)](https://packagist.org/packages/maliklibs/zkteco)
-
+[![Laravel Version](https://img.shields.io/badge/Laravel-6.x%20%7C%208.x%20%7C%209.x%20%7C%2010.x%20%7C%2011.x-brightgreen.svg)](https://laravel.com)
 
 The `maliklibs/zkteco` package provides easy to use functions to ZKTeco Device activities.
 
-__Requires:__  **Laravel** >= **6.0**
+**Requires:**  **Laravel** >= **6.0** | **PHP** >= **7.4**
 
-__License:__ MIT or later
+**Compatible with:** Laravel 6.x, 8.x, 9.x, 10.x, 11.x
 
-## Installation:
+**License:** MIT or later
+
+## Installation
+
 You can install the package via composer:
 
-``` bash
+```bash
 composer require maliklibs/zkteco
 ```
+
 The package will automatically register itself.
 
-You have to enable your php socket if it is not enable. 
+### Configuration (Optional)
 
+Publish the configuration file:
+
+```bash
+php artisan vendor:publish --provider="maliklibs\Zkteco\Providers\ZktecoServiceProvider" --tag="zkteco-config"
+```
+
+This will create a `config/zkteco.php` file where you can customize the default settings.
+
+### Environment Variables
+
+You can also set these environment variables in your `.env` file:
+
+```env
+ZKTECO_IP=192.168.1.201
+ZKTECO_PORT=4370
+ZKTECO_TIMEOUT=5
+ZKTECO_DEBUG=false
+```
 
 ## Usage
 
-1. Create a object of ZKTeco class.
+### Method 1: Using Facade (Recommended)
 
 ```php
-    use maliklibs\Zkteco\Lib\ZKTeco;
+use maliklibs\Zkteco\Facades\ZKTeco;
 
-//  1 s't parameter is string $ip Device IP Address
-//  2 nd  parameter is integer $port Default: 4370
-//. 3rd parameter is interger seconds ( this is socker default read timeout, in case you try with a wrong ip which doesn't belongs to a machine then it will respond with error otherwise it will keep loading and crash )  
+// Connect to device
+ZKTeco::connect();
 
-    $zk = new ZKTeco('192.168.1.201', 4370, 5);
-    
-//  or you can use with port
-//    $zk = new ZKTeco('192.168.1.201', 8080);
-    
+// Get device version
+$version = ZKTeco::version();
+
+// Get users
+$users = ZKTeco::getUser();
+
+// Get attendance
+$attendance = ZKTeco::getAttendance();
+
+// Disconnect
+ZKTeco::disconnect();
 ```
 
-2. Call ZKTeco methods
+### Method 2: Using Dependency Injection
+
+```php
+use maliklibs\Zkteco\Lib\ZKTeco;
+
+class AttendanceController extends Controller
+{
+    public function index(ZKTeco $zk)
+    {
+        $zk->connect();
+        $attendance = $zk->getAttendance();
+        $zk->disconnect();
+        
+        return response()->json($attendance);
+    }
+}
+```
+
+### Method 3: Manual Instantiation
+
+```php
+use maliklibs\Zkteco\Lib\ZKTeco;
+
+// 1st parameter is string $ip Device IP Address
+// 2nd parameter is integer $port Default: 4370
+// 3rd parameter is integer seconds (socket default read timeout)
+$zk = new ZKTeco('192.168.1.201', 4370, 5);
+
+// Connect
+$zk->connect();
+
+// Use device methods
+$version = $zk->version();
+$users = $zk->getUser();
+
+// Disconnect
+$zk->disconnect();
+```
+
+## Available Methods
+
+### Connection Management
 
 * __Connect__ 
 ```php
-//    connect
-//    this return bool
-    $zk->connect();   
+// Connect to device
+// Returns bool
+$zk->connect();   
 ```
 
 * __Disconnect__ 
 ```php
-//    disconnect
-//    this return bool
-
-    $zk->disconnect();   
+// Disconnect from device
+// Returns bool
+$zk->disconnect();   
 ```
+
+### Device Control
 
 * __Enable Device__ 
 ```php
-//    enable
-//    this return bool/mixed
-
-    $zk->enableDevice();   
+// Enable device
+// Returns bool/mixed
+$zk->enableDevice();   
 ```
 > **NOTE**: You have to call after read/write any info of Device.
 
 * __Disable Device__ 
 ```php
-//    disable 
-//    this return bool/mixed
-
-    $zk->disableDevice(); 
+// Disable device
+// Returns bool/mixed
+$zk->disableDevice(); 
 ```
-> **NOTE**: You have to call before read/write any info of Device. 
-
-
-* __Device Version__ 
-```php
-//    get device version 
-//    this return bool/mixed
-
-    $zk->version(); 
-```
-
-
-* __Device Os Version__ 
-```php
-//    get device os version 
-//    this return bool/mixed
-
-    $zk->osVersion(); 
-```
+> **NOTE**: You have to call before read/write any info of Device.
 
 * __Power Off__ 
 ```php
-//    turn off the device 
-//    this return bool/mixed
-
-    $zk->shutdown(); 
+// Turn off the device
+// Returns bool/mixed
+$zk->shutdown(); 
 ```
 
 * __Restart__ 
 ```php
-//    restart the device 
-//    this return bool/mixed
-
-    $zk->restart(); 
+// Restart the device
+// Returns bool/mixed
+$zk->restart(); 
 ```
 
 * __Sleep__ 
 ```php
-//    sleep the device 
-//    this return bool/mixed
-
-    $zk->sleep(); 
+// Sleep the device
+// Returns bool/mixed
+$zk->sleep(); 
 ```
 
 * __Resume__ 
 ```php
-//    resume the device from sleep 
-//    this return bool/mixed
-
-    $zk->resume(); 
+// Resume the device from sleep
+// Returns bool/mixed
+$zk->resume(); 
 ```
 
-* __Voice Test__ 
-```php
-//    voice test of the device "Thank you" 
-//    this return bool/mixed
+### Device Information
 
-    $zk->testVoice(); 
+* __Device Version__ 
+```php
+// Get device version
+// Returns bool/mixed
+$zk->version(); 
+```
+
+* __Device OS Version__ 
+```php
+// Get device OS version
+// Returns bool/mixed
+$zk->osVersion(); 
 ```
 
 * __Platform__ 
 ```php
-//    get platform 
-//    this return bool/mixed
-
-    $zk->platform(); 
+// Get platform
+// Returns bool/mixed
+$zk->platform(); 
 ```
 
 * __Firmware Version__ 
 ```php
-//    get firmware version
-//    this return bool/mixed
-
-    $zk->fmVersion(); 
-```
-
-* __Work Code__ 
-```php
-//    get work code
-//    this return bool/mixed
-
-    $zk->workCode(); 
-```
-
-* __SSR__ 
-```php
-//    get SSR
-//    this return bool/mixed
-
-    $zk->ssr(); 
-```
-
-* __Pin Width__ 
-```php
-//    get  Pin Width
-//    this return bool/mixed
-
-    $zk->pinWidth(); 
+// Get firmware version
+// Returns bool/mixed
+$zk->fmVersion(); 
 ```
 
 * __Serial Number__ 
 ```php
-//    get device serial number
-//    this return bool/mixed
-
-    $zk->serialNumber(); 
+// Get device serial number
+// Returns bool/mixed
+$zk->serialNumber(); 
 ```
 
 * __Device Name__ 
 ```php
-//    get device name
-//    this return bool/mixed
-
-    $zk->deviceName(); 
+// Get device name
+// Returns bool/mixed
+$zk->deviceName(); 
 ```
+
+* __Work Code__ 
+```php
+// Get work code
+// Returns bool/mixed
+$zk->workCode(); 
+```
+
+* __SSR__ 
+```php
+// Get SSR
+// Returns bool/mixed
+$zk->ssr(); 
+```
+
+* __Pin Width__ 
+```php
+// Get Pin Width
+// Returns bool/mixed
+$zk->pinWidth(); 
+```
+
+### Time Management
 
 * __Get Device Time__ 
 ```php
-//    get device time
-
-//    return bool/mixed bool|mixed Format: "Y-m-d H:i:s"
-
-    $zk->getTime(); 
+// Get device time
+// Returns bool/mixed Format: "Y-m-d H:i:s"
+$zk->getTime(); 
 ```
 
 * __Set Device Time__ 
 ```php
-//    set device time
-//    parameter string $t Format: "Y-m-d H:i:s"
-//    return bool/mixed
-
-    $zk->setTime(); 
+// Set device time
+// Parameter string $t Format: "Y-m-d H:i:s"
+// Returns bool/mixed
+$zk->setTime('2024-01-01 12:00:00'); 
 ```
+
+### User Management
 
 * __Get Users__ 
 ```php
-//    get User
-//    this return array[]
-
-    $zk->getUser(); 
+// Get all users
+// Returns array[]
+$zk->getUser(); 
 ```
 
 * __Set Users__ 
 ```php
-//    set user
-
-//    1 s't parameter int $uid Unique ID (max 65535)
-//    2 nd parameter int|string $userid ID in DB (same like $uid, max length = 9, only numbers - depends device setting)
-//    3 rd parameter string $name (max length = 24)
-//    4 th parameter int|string $password (max length = 8, only numbers - depends device setting)
-//    5 th parameter int $role Default Util::LEVEL_USER
-//    6 th parameter int $cardno Default 0 (max length = 10, only numbers
-
-//    return bool|mixed
-
-    $zk->setUser(); 
-```
-
-* __Clear All Admin__ 
-```php
-//    remove all admin
-//    return bool|mixed
-
-    $zk->clearAdmin(); 
-```
-
-* __Clear All Users__ 
-```php
-//    remove all users
-//    return bool|mixed
-
-    $zk->clearAdmin(); 
+// Set user
+// 1st parameter int $uid Unique ID (max 65535)
+// 2nd parameter int|string $userid ID in DB (max length = 9, only numbers)
+// 3rd parameter string $name (max length = 24)
+// 4th parameter int|string $password (max length = 8, only numbers)
+// 5th parameter int $role Default 0
+// 6th parameter int $cardno Default 0 (max length = 10, only numbers)
+// Returns bool|mixed
+$zk->setUser(1, '001', 'John Doe', '1234', 0, 0); 
 ```
 
 * __Remove A User__ 
 ```php
-//    remove a user by $uid
-//    parameter integer $uid
-//    return bool|mixed
-
-    $zk->removeUser(); 
+// Remove a user by $uid
+// Parameter integer $uid
+// Returns bool|mixed
+$zk->removeUser(1); 
 ```
+
+* __Clear All Users__ 
+```php
+// Remove all users
+// Returns bool|mixed
+$zk->clearUsers(); 
+```
+
+* __Clear All Admin__ 
+```php
+// Remove all admin
+// Returns bool|mixed
+$zk->clearAdmin(); 
+```
+
+### Fingerprint Management
+
+* __Get Fingerprint__ 
+```php
+// Get fingerprint data for user
+// Parameter integer $uid
+// Returns array[]
+$zk->getFingerprint(1); 
+```
+
+* __Set Fingerprint__ 
+```php
+// Set fingerprint data for user
+// 1st parameter integer $uid
+// 2nd parameter array $data
+// Returns bool|mixed
+$zk->setFingerprint(1, $fingerprintData); 
+```
+
+* __Remove Fingerprint__ 
+```php
+// Remove fingerprint data for user
+// 1st parameter integer $uid
+// 2nd parameter array $data
+// Returns bool|mixed
+$zk->removeFingerprint(1, $fingerprintData); 
+```
+
+### Attendance Management
 
 * __Get Attendance Log__ 
 ```php
-//    get attendance log
-
-//    return array[]
-
-//    like as 0 => array:5 [▼
-//              "uid" => 1      /* serial number of the attendance */
-//              "id" => "1"     /* user id of the application */
-//              "state" => 1    /* the authentication type, 1 for Fingerprint, 4 for RF Card etc */
-//              "timestamp" => "2020-05-27 21:21:06" /* time of attendance */
-//              "type" => 255   /* attendance type, like check-in, check-out, overtime-in, overtime-out, break-in & break-out etc. if attendance type is none of them, it gives  255. */
-//              ]
-
-    $zk->getAttendance(); 
+// Get attendance log
+// Returns array[]
+// Format: [
+//     [
+//         "uid" => 1,           // Serial number of the attendance
+//         "id" => "1",          // User ID of the application
+//         "state" => 1,         // Authentication type (1=Fingerprint, 4=RF Card, etc.)
+//         "timestamp" => "2020-05-27 21:21:06", // Time of attendance
+//         "type" => 255         // Attendance type (check-in, check-out, etc.)
+//     ]
+// ]
+$zk->getAttendance(); 
 ```
 
 * __Clear Attendance Log__ 
 ```php
-//    clear attendance log
-
-//    return bool/mixed
-
-    $zk->clearAttendance(); 
+// Clear attendance log
+// Returns bool/mixed
+$zk->clearAttendance(); 
 ```
 
+### Device Features
 
+* __Voice Test__ 
+```php
+// Voice test of the device "Thank you"
+// Returns bool/mixed
+$zk->testVoice(); 
+```
 
-# end
+* __Face Function On__ 
+```php
+// Enable face function
+// Returns bool|mixed
+$zk->faceFunctionOn(); 
+```
+
+* __Clear LCD__ 
+```php
+// Clear LCD display
+// Returns bool|mixed
+$zk->clearLCD(); 
+```
+
+* __Write LCD__ 
+```php
+// Write to LCD display
+// 1st parameter int $rank Line number of text
+// 2nd parameter string $text Text to display
+// Returns bool|mixed
+$zk->writeLCD(1, 'Hello World'); 
+```
+
+## Testing
+
+Run the tests:
+
+```bash
+composer test
+```
+
+## Requirements
+
+- PHP >= 7.4
+- Laravel >= 6.0
+- PHP Socket extension enabled
+
+## Changelog
+
+Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+
+## Contributing
+
+Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+
+## Security
+
+If you discover any security related issues, please email malik.waqas.09@hotmail.com instead of using the issue tracker.
+
+## Credits
+
+- [Malik Waqas](https://github.com/sketchtechnologies1)
+- [All Contributors](../../contributors)
+
+## License
+
+The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
