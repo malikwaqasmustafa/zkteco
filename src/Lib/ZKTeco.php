@@ -429,8 +429,15 @@ class ZKTeco{
   }
 
 
-  public function writeLCD()
+  /**
+   * Write text to LCD display
+   *
+   * @param int $rank Line number of text
+   * @param string $text Text which will display in the LCD screen
+   * @return bool|mixed
+   */
+  public function writeLCD($rank, $text)
   {
-    return Device::writeLCD($this, 2, "Welcome From SDK");
+    return Device::writeLCD($this, $rank, $text);
   }
 }
