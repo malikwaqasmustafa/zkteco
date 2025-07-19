@@ -39,10 +39,6 @@ jobs:
           - php: 8.2
             laravel: 10.*
             dependency-version: prefer-stable
-          # Laravel 11.x - PHP 8.2
-          - php: 8.2
-            laravel: 11.*
-            dependency-version: prefer-stable
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }}
 

@@ -1,6 +1,6 @@
 {
     "name": "maliklibs/zkteco",
-    "description": "ZKTeco Laravel Library - Compatible with Laravel 6, 8, 9, 10+",
+    "description": "ZKTeco Laravel Library - Compatible with Laravel 6, 8, 9, 10",
     "type": "library",
     "license": "MIT",
     "keywords": ["laravel", "zkteco", "attendance", "biometric", "fingerprint"],
