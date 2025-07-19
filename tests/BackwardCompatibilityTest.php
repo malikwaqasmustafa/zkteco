@@ -35,7 +35,14 @@ class BackwardCompatibilityTest extends TestCase
         // Test that all public properties are accessible
         $this->assertIsString($zk->_ip);
         $this->assertIsInt($zk->_port);
-        $this->assertIsResource($zk->_zkclient);
+        
+        // In PHP 8.0+, socket_create returns a Socket object, not a resource
+        if (PHP_VERSION_ID >= 80000) {
+            $this->assertIsObject($zk->_zkclient);
+            $this->assertInstanceOf('Socket', $zk->_zkclient);
+        } else {
+            $this->assertIsResource($zk->_zkclient);
+        }
     }
 
     /** @test */

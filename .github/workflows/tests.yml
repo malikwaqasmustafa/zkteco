@@ -12,14 +12,37 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [7.4, 8.0, 8.1, 8.2]
-        laravel: [6.*, 8.*, 9.*, 10.*, 11.*]
-        dependency-version: [prefer-stable]
-        exclude:
+        # Realistic PHP/Laravel compatibility matrix
+        include:
+          # Laravel 6.x - PHP 7.4 only
           - php: 7.4
-            laravel: 11.*
+            laravel: 6.*
+            dependency-version: prefer-stable
+          # Laravel 8.x - PHP 7.4, 8.0
+          - php: 7.4
+            laravel: 8.*
+            dependency-version: prefer-stable
           - php: 8.0
+            laravel: 8.*
+            dependency-version: prefer-stable
+          # Laravel 9.x - PHP 8.0, 8.1
+          - php: 8.0
+            laravel: 9.*
+            dependency-version: prefer-stable
+          - php: 8.1
+            laravel: 9.*
+            dependency-version: prefer-stable
+          # Laravel 10.x - PHP 8.1, 8.2
+          - php: 8.1
+            laravel: 10.*
+            dependency-version: prefer-stable
+          - php: 8.2
+            laravel: 10.*
+            dependency-version: prefer-stable
+          # Laravel 11.x - PHP 8.2
+          - php: 8.2
             laravel: 11.*
+            dependency-version: prefer-stable
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }}
 
@@ -31,7 +54,7 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php }}
-        extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, iconv, json, mbstring, pdo
+        extensions: mbstring, sockets, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, json, pdo
         coverage: none
 
     - name: Install dependencies

@@ -25,6 +25,11 @@ class ZktecoServiceProvider extends ServiceProvider
                 Config::get('zkteco.timeout', 5)
             );
         });
+
+        // Bind the concrete class for dependency injection
+        $this->app->bind(\maliklibs\Zkteco\Lib\ZKTeco::class, function ($app) {
+            return $app->make('zkteco');
+        });
     }
 
     /**

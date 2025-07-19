@@ -385,11 +385,23 @@ $zk->writeLCD(1, 'Hello World');
 
 ## Testing
 
-Run the tests:
+Run the tests to verify package compatibility and functionality:
 
 ```bash
 composer test
 ```
+
+These tests verify:
+- ✅ Package structure and autoloading
+- ✅ Service provider registration and configuration
+- ✅ Facade functionality and dependency injection
+- ✅ Method signatures and availability
+- ✅ PHP extension requirements (mbstring, sockets)
+- ✅ Backward compatibility with original usage
+- ✅ Laravel integration across all supported versions
+- ✅ Socket handling for different PHP versions (7.4 vs 8.0+)
+
+**Note**: These are unit tests that verify the package loads correctly and is usable. They do not require actual ZKTeco hardware and will pass in CI/CD environments.
 
 ## Requirements
 
